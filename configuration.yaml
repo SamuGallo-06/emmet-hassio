@@ -2,3 +2,6 @@ picovoice:
   access-key: 89Jd6AvDAfcqBFMf23BrepSkU1pGkXA+m0y+FRg/cBGWec88RTtWzg==
   wake-up-word-file: models/Hey-Doc_it_linux_v3_0_0.ppn
   model-file: models/porcupine_params_it.pv
+homeassistant:
+  server-url: http://localhost:8123
+  access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjYmZiYTJiMTdhY2Q0NzQzOGZmZTA3Yzc1ODk0MTM2NiIsImlhdCI6MTc2MTA2NTY5NywiZXhwIjoyMDc2NDI1Njk3fQ.9gZ7ukfRCgzubJ54wDjH1BMm-1ZBoPpOZX9QaV6-BMI
