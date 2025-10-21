@@ -36,7 +36,7 @@ class Emmet():
 
     def Start(self):
         try:
-            porcupine = pvporcupine.create(
+            self.porcupine = pvporcupine.create(
                 access_key=self.PICOVOICE_ACCESS_KEY,
                 keyword_paths=[self.WAKE_WORD_FILE],
                 model_path=self.MODEL_FILE_IT
@@ -44,28 +44,28 @@ class Emmet():
 
             self.pa = pyaudio.PyAudio()
             
-            audio_stream = self.pa.open(
-                rate=porcupine.sample_rate,
+            self.audio_stream = self.pa.open(
+                rate=self.porcupine.sample_rate,
                 channels=1,
                 format=pyaudio.paInt16,
                 input=True,
-                frames_per_buffer=porcupine.frame_length
+                frames_per_buffer=self.porcupine.frame_length
             )
 
             print(blue("[INFO]") + " Pronto. In ascolto per 'Hey Doc!'...")
 
             while True:
-                pcm = audio_stream.read(porcupine.frame_length)
-                pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
+                pcm = self.audio_stream.read(self.porcupine.frame_length)
+                pcm = struct.unpack_from("h" * self.porcupine.frame_length, pcm)
 
                 # 'keyword_index' will be 0 if the keyword is detected
-                keyword_index = porcupine.process(pcm)
+                keyword_index = self.porcupine.process(pcm)
 
                 if keyword_index >= 0:
                     #Hey Doc! Detected
                     print("---------------------------------")
                     print(blue("[INFO]") + " Wake-word 'Hey Doc!' rilevata!")
-                    audio_stream.stop_stream() 
+                    self.audio_stream.stop_stream() 
                     print(blue("[INFO]") + " Listening for command...")
 
                     # --- Ora usa SpeechRecognition per capire il comando ---
@@ -89,51 +89,60 @@ class Emmet():
                         except sr.RequestError as e:
                             print(red("[ERRORE]") + f" Errore API Google; {e}")
                         except KeyboardInterrupt:
-                            print(blue("[INFO]") + " Spegnimento...")
-                            sys.exit(0)
+                            self.ExitEmmet()
 
                     print("---------------------------------")
-                    print(blue("[INFO]") + " In ascolto per 'Hey Doc!'...")
+                    print(blue("[INFO]") + f" Listening for 'Hey Doc!'...")
 
-                    audio_stream.start_stream()
+                    self.audio_stream.start_stream()
 
         except pvporcupine.PorcupineError as e:
             print(red("[ERRORE]") + f" Errore Porcupine: {e}")
         except Exception as e:
             print(red("[ERRORE]") + f" Errore generico: {e}")
         except KeyboardInterrupt:
-            print(blue("[INFO]") + " Spegnimento...")
-            sys.exit(0)
+            self.ExitEmmet()
         finally:
-            # Pulizia finale
-            if 'porcupine' in locals() and porcupine is not None:
-                porcupine.delete()
-            if 'audio_stream' in locals() and audio_stream is not None:
-                audio_stream.close()
-            if 'pa' in locals() and self.pa is not None:
-                self.pa.terminate()
+            self.ExitEmmet()
+            
+    def ExitEmmet(self):
+        print(blue("[INFO]") + " Cleaning up...", end="")
+        if 'porcupine' in locals() and self.porcupine is not None:
+            self.porcupine.delete()
+        if 'audio_stream' in locals() and self.audio_stream is not None:
+            self.audio_stream.close()
+        if 'pa' in locals() and self.pa is not None:
+            self.pa.terminate()
+        print(bright_green("Done!"))
+        print(blue("[INFO]") + " Leaving...")    
+        sys.exit(0)
                 
     def PerformAction(self) -> bool:
         
         cmd = self.commandText.lower()
         
-        if(("che ore sono" in cmd) or ("ore" in cmd)):
-            DisplayHour()
-            
-        elif(("che giorno è" in cmd) or ("giorno" in cmd) or ("oggi è il" in cmd)):
-            DisplayDate() 
-                                       
-        elif("arrivederci" in cmd):
-            print(magenta("AZIONE") + ": Spegnimento...")
-            return True
+        #Still not be implemented, testing only Assist in Home assistant
         
-        else:
+        #if(("che ore sono" in cmd) or ("ore" in cmd)):
+            #DisplayHour()
+            
+        #elif(("che giorno è" in cmd) or ("giorno" in cmd) or ("oggi è il" in cmd)):
+            #DisplayDate() 
+                                       
+        #elif("arrivederci" in cmd):
+            #print(magenta("AZIONE") + ": Spegnimento...")
+            #return True
+        
+        #else:
             #Ask assist
-            print(magenta("AZIONE") + ": Contatto Assist")
-            result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
+            #print(magenta("AZIONE") + ": Contatto Assist")
+            #result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
             
-            print("Azione eseguita con successo") if result else print("Si è verificato un errore")
-            
+            #print("Azione eseguita con successo") if result else print("Si è verificato un errore")
+        
+        result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
+        print("Azione eseguita con successo") if result else print("Si è verificato un errore")
+        
         return False
     
 if __name__ == "__main__":
