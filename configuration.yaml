@@ -1,0 +1,4 @@
+picovoice:
+  access-key: 89Jd6AvDAfcqBFMf23BrepSkU1pGkXA+m0y+FRg/cBGWec88RTtWzg==
+  wake-up-word-file: models/Hey-Doc_it_linux_v3_0_0.ppn
+  model-file: models/porcupine_params_it.pv
