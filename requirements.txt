@@ -2,3 +2,4 @@ pvporcupine
 pyaudio 
 speechrecognition
 PyYAML
+logging

@@ -11,7 +11,7 @@ def DisplayDate():
     currentDate = dt.now().strftime("%d/%m/%Y")
     print(f"Doc: Oggi è il {currentDate}")
 
-def AskAssist(hass_url, access_token, message) -> bool:
+def AskAssist(hass_url, access_token, message, logger) -> bool:
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
@@ -43,15 +43,19 @@ def AskAssist(hass_url, access_token, message) -> bool:
     except requests.exceptions.HTTPError as errh:
         print(bold(red("[ERRORE]")) +f" Errore HTTP: {errh}")
         print(f"Dettagli risposta: {response.text}")
+        logger.critical(f"HTTP Error\nDetails:\n{errh}\n\nResponse:\n{response.text}")
         return False
     except requests.exceptions.ConnectionError as errc:
         print(bold(red("[ERRORE]")) +f" Errore di connessione: {errc}")
+        logger.critical(f"Connection Failed\nDetails:\n{errc}")
         return False
     except requests.exceptions.Timeout as errt:
         print(bold(red("[ERRORE]")) +f" Errore di Timeout: {errt}")
+        logger.critical(f"Timeout error\nDetails:\n{errt}")
         return False
     except requests.exceptions.RequestException as err:
         print(bold(red("[ERRORE]")) +f" Errore generico: {err}")
+        logger.critical(f"A Generic error has occurred\nDetails:\n{err}")
         return False
     else:
         return True
