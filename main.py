@@ -22,9 +22,9 @@ class Emmet():
     def CreateLogFile(self):
         print(blue("[BOOT]") + " Creating log file...", end="")
         currentDateTime = datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")  
-        logging.basicConfig(filename=f"emmet-{currentDateTime}.log", filemode="w", format="[%(asctime)s][%(levelname)s] %(message)s")
+        logging.basicConfig(filename=f"logs/emmet-{currentDateTime}.log", filemode="w", format="[%(asctime)s][%(levelname)s] %(message)s")
         self.logger = logging.getLogger(__name__)
-        file_handler = logging.FileHandler('logs.log')
+        file_handler = logging.FileHandler('logs/logs.log')
         self.logger.addHandler(file_handler)
         print(bright_green("Done!"))
     
@@ -47,7 +47,7 @@ class Emmet():
         self.recognizer = sr.Recognizer()
         
         try:
-            self.logger.info("Setting Up Porcupine")
+            self.logger.info("Setting Up Porcupine...")
             self.porcupine = pvporcupine.create(
                 access_key=self.PICOVOICE_ACCESS_KEY,
                 keyword_paths=[self.WAKE_WORD_FILE],
@@ -145,6 +145,7 @@ class Emmet():
             
     def ExitEmmet(self):
         print(blue("[INFO]") + " Cleaning up...", end="")
+        self.logger.info("Exiting Emmet")
         if 'porcupine' in locals() and self.porcupine is not None:
             self.porcupine.delete()
         if 'audio_stream' in locals() and self.audio_stream is not None:
@@ -153,6 +154,7 @@ class Emmet():
             self.pa.terminate()
         print(bright_green("Done!"))
         print(blue("[INFO]") + " Leaving...")    
+        self.logger.info("Cleanup completed")
         sys.exit(0)
                 
     def PerformAction(self) -> bool:
@@ -161,28 +163,34 @@ class Emmet():
         
         #Still not be implemented, testing only Assist in Home assistant
         
-        #if(("che ore sono" in cmd) or ("ore" in cmd)):
-            #DisplayHour()
+        if(("che ore sono" in cmd) or ("ore" in cmd)):
+            DisplayHour()
             
-        #elif(("che giorno è" in cmd) or ("giorno" in cmd) or ("oggi è il" in cmd)):
-            #DisplayDate() 
+        elif(("che giorno è" in cmd) or ("giorno" in cmd) or ("oggi è il" in cmd)):
+            DisplayDate() 
+        
+        elif("sei un coglione" in cmd):
+            print("Doc: Lo Sarai tu, piuttosto.") 
+            
+        elif("grande giove" in cmd):
+            print("La mia ")
                                        
-        #elif("arrivederci" in cmd):
-            #print(magenta("AZIONE") + ": Spegnimento...")
-            #return True
+        elif("arrivederci" in cmd):
+            print(magenta("AZIONE") + ": Spegnimento...")
+            return True
         
-        #else:
+        else:
             #Ask assist
-            #print(magenta("AZIONE") + ": Contatto Assist")
-            #result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
+            print(magenta("AZIONE") + ": Contatto Assist")
+            result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
             
-            #print("Azione eseguita con successo") if result else print("Si è verificato un errore")
+            print("Azione eseguita con successo") if result else print("Si è verificato un errore")
         
-        result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
-        print("Azione eseguita con successo") if result else print("Si è verificato un errore")
-        self.logger.info(f"Command run successfully") if result else self.logger.critical(f"Failed running command")
+        # result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
+        # print("Azione eseguita con successo") if result else print("Si è verificato un errore")
+        # self.logger.info(f"Command run successfully") if result else self.logger.critical(f"Failed running command")
         
-        return False
+        # return False
     
 if __name__ == "__main__":
     if(len(sys.argv) > 1):
