@@ -1,29 +1,32 @@
 # Emmet
 
-> "Aspetta un attimo, Doc. Mi stai dicendo che hai costruito un assistente vocale... per Home Assistant?"
+> "Wait a minute, Doc. Are you telling me you built a voice assistant... for Home Assistant?"
 
-**Emmett** è un assistente vocale self-hosted, scritto in Python, progettato per integrarsi direttamente con [Home Assistant](https://www.home-assistant.io/).
+**Emmett** is a self-hosted voice assistant, written in Python, designed to integrate directly with [Home Assistant](https://www.home-assistant.io/).
 
-Utilizza la wake-word personalizzata **"Hey Doc!"** per attivarsi e rimane in ascolto dei tuoi comandi. È costruito per essere leggero, privato e tematico.
+It uses the custom wake-word **"Hey Doc!"** to activate and then listens for your commands. It's built to be lightweight, privacy-focused, and thematic.
 
-L'obiettivo di questo progetto è fornire un'alternativa flessibile ai servizi cloud (come Alexa o Google) usando un motore di wake-word offline e l'elaborazione dei comandi locali o tramite le API di Home Assistant.
+The goal of this project is to provide a flexible alternative to cloud services (like Alexa or Google) by using an offline wake-word engine and processing commands locally or via APIs...
 
-## Caratteristiche Principali
+## Main Features
 
-* **Wake-Word Offline:** Utilizza [Picovoice Porcupine](https://picovoice.ai/platform/porcupine/) per il rilevamento della wake-word "Hey Doc!" in modo efficiente e interamente offline.
-* **Integrazione HA:** Progettato per inviare comandi, attivare script o automazioni sulla tua istanza di Home Assistant.
-* **Flessibile:** Scritto in Python, facile da modificare ed estendere.
-* **Privato:** La tua voce non lascia la tua rete locale (eccetto per la trascrizione dei comandi, se si sceglie di usare un'API cloud come Google Speech-to-Text).
+* **Offline Wake-Word:** Uses [Picovoice Porcupine](https://picovoice.ai/platform/porcupine/) to detect the wake-word "Hey Doc!" efficiently and entirely offline.
+* **HA Integration:** Designed to send commands, trigger scripts, or start automations on your Home Assistant instance.
+* **Flexible:** Written in Python, easy to modify and extend.
+* **Private:** Your voice does not leave your local network (except for command transcription if you choose to use a cloud API such as Google Speech-to-Text).
 
-## Requisiti
+## Requirements
 
 * Python 3
-* Un'istanza di Home Assistant
-* Un microfono
-* Una AccessKey Picovoice (gratuita per uso personale)
+* A Home Assistant instance
+* A microphone
+* A Picovoice AccessKey (free for personal use)
 
-## Licenza
+## Installation
 
-Il codice sorgente di **Emmett** è rilasciato sotto la [Licenza MIT](LICENSE).
 
-Si prega di notare che questo progetto dipende da Picovoice Porcupine, che è governato dalla [Licenza Apache 2.0](https://github.com/Picovoice/porcupine/blob/master/LICENSE). I modelli wake-word personalizzati generati tramite la Picovoice Console Free Tier sono limitati all'uso personale e non commerciale.
+## License
+
+The source code of **Emmett** is released under the [MIT License](LICENSE).
+
+Please note that this project depends on Picovoice Porcupine, which is governed by the [Apache 2.0 License](https://github.com/Picovoice/porcupine/blob/master/LICENSE). Wake-word models ...
