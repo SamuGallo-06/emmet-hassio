@@ -4,9 +4,10 @@ import pvporcupine
 import speech_recognition as sr
 import yaml
 import sys
-from pyterminal.pyterminal import * 
+from pyterminal import * 
 import logging
 import datetime
+import re
 
 from commands import *
 from utilities import *
@@ -22,9 +23,12 @@ class Emmet():
     def CreateLogFile(self):
         print(blue("[BOOT]") + " Creating log file...", end="")
         currentDateTime = datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")  
-        logging.basicConfig(filename=f"logs/emmet-{currentDateTime}.log", filemode="w", format="[%(asctime)s][%(levelname)s] %(message)s")
+        logging.basicConfig(filename=f"logs/emmet-{currentDateTime}.log", filemode="w", format="[%(asctime)s][%(levelname)s] %(message)s", level=logging.INFO)
         self.logger = logging.getLogger(__name__)
-        file_handler = logging.FileHandler('logs/logs.log')
+        self.logger.setLevel(logging.INFO)
+        file_handler = logging.FileHandler(f'logs/emmet-{currentDateTime}.log')
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)s] %(message)s"))
         self.logger.addHandler(file_handler)
         print(bright_green("Done!"))
     
@@ -44,6 +48,7 @@ class Emmet():
         self.logger.info("Done!")
 
     def Setup(self):
+        self.ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
         self.recognizer = sr.Recognizer()
         
         try:
@@ -172,17 +177,46 @@ class Emmet():
         elif("sei un coglione" in cmd):
             print("Doc: Lo Sarai tu, piuttosto.") 
             
-        elif("grande giove" in cmd):
-            print("La mia ")
-                                       
-        elif("arrivederci" in cmd):
-            print(magenta("AZIONE") + ": Spegnimento...")
-            return True
+        elif("incredibile" in cmd or "impossibile" in cmd or "che casino" in cmd):
+            msg = magenta("AZIONE") + ": GRANDE GIOVE!"
+            print(msg)
+            self.logger.info(self.ansi_escape.sub('', msg))
+            
+        elif("quanta energia" in cmd or "gigawatt" in cmd or "fulmine" in cmd):
+            msg = magenta("AZIONE") + ": 1.21 GIGAWATT! Come ho potuto essere così sbadato!"
+            print(msg)
+            self.logger.info(self.ansi_escape.sub('', msg))
+            
+        elif("flusso canalizzatore" in cmd):
+            msg = magenta("AZIONE") + ": È quello che rende possibile il viaggio nel tempo! La mia più grande invenzione!"
+            print(msg)
+            self.logger.info(self.ansi_escape.sub('', msg))
+            
+        elif("strade" in cmd or "dove andiamo" in cmd):
+            msg = magenta("AZIONE") + ": Strade? Dove stiamo andando noi... non servono strade!"
+            print(msg)
+            self.logger.info(self.ansi_escape.sub('', msg))
+
+        elif("delorean" in cmd or "macchina del tempo" in cmd):
+            msg = magenta("AZIONE") + ": Se proprio devi costruire una macchina del tempo... perché non farla con un po' di STILE?"
+            print(msg)
+            self.logger.info(self.ansi_escape.sub('', msg))
+            
+        elif("come faccio" in cmd or "non lo so" in cmd or "un consiglio" in cmd):
+            msg = magenta("AZIONE") + ": Devi pensare quadrimensionalmente! Ignora le tre dimensioni!"
+            print(msg)
+            self.logger.info(self.ansi_escape.sub('', msg))
+            
+        elif("arrivederci" in cmd or "spegniti" in cmd):
+            msg = magenta("AZIONE") + ": Ci vediamo... nel futuro! (Spegnimento...)"
+            print(msg)
+            self.logger.info(self.ansi_escape.sub('', msg))
+            return True # Ritorna True per spegnere
         
         else:
             #Ask assist
             print(magenta("AZIONE") + ": Contatto Assist")
-            result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText)
+            result = AskAssist(self.HASS_URL, self.HASS_TOKEN, self.commandText, self.logger)
             
             print("Azione eseguita con successo") if result else print("Si è verificato un errore")
         
@@ -203,7 +237,18 @@ if __name__ == "__main__":
         elif arg == "--version" or arg == "-v":
             DisplayVersion()  
         elif arg == "--update" or arg == "-u":
-            CheckForUpdates()   
+            CheckForUpdates()
+        elif arg == "--get" or arg == "-g":
+            if len(sys.argv) == 4:
+                section = sys.argv[2]
+                key = sys.argv[3]
+                GetConfigValue(section, key)
+            else:
+                print(bold(red("[ERRORE]")) + "L'opzione --get richiede 2 argomenti: <SECTION> <KEY>")
+                print("Esempio: python emmet.py --get " + blue("homeassistant") + bright_green("homeassistant"))
+                print()
+        elif arg == "--clear-logs" or arg == "-cl":
+            ClearLogFiles()
         elif arg == "--set" or arg == "-s":
             if len(sys.argv) == 5:
                 section = sys.argv[2]
@@ -214,7 +259,6 @@ if __name__ == "__main__":
                 print(bold(red("[ERRORE]")) + "L'opzione --set richiede 3 argomenti: <SECTION> <KEY> <VALUE>")
                 print("Esempio: python emmet.py --set " + blue("homeassistant") + bright_green("homeassistant") + yellow("http://192.168.1.10:8123"))
                 print()
-                DisplayHelp()
         else:
             print(bold(red("[ERRORE]")) + f" Opzione non riconosciuta '{arg}'")
             print("Usa -h o --help per vedere le opzioni disponibili.")

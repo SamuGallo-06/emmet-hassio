@@ -1,6 +1,7 @@
 import speech_recognition as sr
 from pyterminal.pyterminal import *
 import yaml
+import os
 
 CURRENT_VERSION = "0.0.1"
 
@@ -80,4 +81,30 @@ def SetConfigValue(section, key, value):
         yaml.dump(currentConfiguration, cfg, sort_keys=False)
         
     print(bold(bright_green("[INFO]")) + " Configurazione salvata.")
+    
+def GetConfigValue(section, key):
+    print(cyan(f"Recupero del valore di configurazione:"))
+    print(f"{section}")
+    print(f" - {key}: ", end="")
+    
+    with open("configuration.yaml", "r") as cfg:
+        currentConfiguration = yaml.safe_load(cfg)
+    
+    try:
+        value = currentConfiguration[section][key]
+        print(bright_green(f"{value}"))
+    except KeyError:
+        print(bold(red("[ERRORE]")) + " Sezione o chiave non trovata nella configurazione.")
+        
+def ClearLogFiles():
+    """Clears the logs directory contents"""
+    logdir_path = "logs"
+    print(cyan("Cancellazione file di log ..."))
+    try:
+        for logfile in os.listdir(logdir_path):
+            if logfile.endswith(".log"):
+                os.remove(os.path.join(logdir_path, logfile))
+        print(bold(bright_green("[INFO]")) + " File di log cancellati con successo.")
+    except Exception as e:
+        print(bold(red("[ERRORE]")) + f" Impossibile cancellare il file di log. Dettagli: {e}")
     
