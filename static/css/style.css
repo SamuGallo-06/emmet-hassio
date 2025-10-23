@@ -1,0 +1,91 @@
+/* --- Impostazioni Globali --- */
+body {
+    /* Usa le variabili di HA per lo sfondo e il testo */
+    background-color: var(--primary-background-color);
+    color: var(--primary-text-color);
+    
+    /* Il font standard di Home Assistant */
+    font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+    
+    margin: 0;
+    padding: 16px;
+}
+
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-weight: 400;
+    color: var(--primary-text-color);
+}
+
+p {
+    color: var(--secondary-text-color);
+}
+
+/* --- Stile della Card (Simulazione di ha-card) --- */
+.ha-card {
+    /* Usa le variabili di HA per le card */
+    background-color: var(--ha-card-background, white); /* Fallback a 'white' se la variabile non è presente */
+    border-radius: var(--ha-card-border-radius, 12px);
+    box-shadow: var(--ha-card-box-shadow, 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12));
+    
+    margin-bottom: 16px;
+    overflow: hidden; /* Per contenere gli angoli arrotondati */
+}
+
+.card-header {
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 16px;
+    border-bottom: 1px solid var(--divider-color, #e0e0e0);
+}
+
+.card-content {
+    padding: 16px;
+}
+
+/* --- Stile degli Elementi del Form --- */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--primary-text-color);
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--divider-color, #ccc);
+    border-radius: var(--ha-card-border-radius, 12px);
+    background-color: var(--input-fill-color, #f9f9f9); /* Adatta anche questo */
+    color: var(--input-ink-color, #212121);
+    box-sizing: border-box; /* Assicura che padding non alteri la larghezza */
+}
+
+/* Bottone stile HA */
+.ha-button {
+    /* Usa il colore d'accento di HA */
+    background-color: var(--primary-color);
+    color: var(--text-primary-color, white); /* Colore del testo sul bottone primario */
+    
+    border: none;
+    border-radius: var(--ha-card-border-radius, 12px);
+    padding: 10px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 16px;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+}
+
+.ha-button:hover {
+    filter: brightness(90%);
+}
+
+.status-ok {
+    color: var(--success-color, green); /* Variabile per lo stato "success" */
+    font-weight: bold;
+}

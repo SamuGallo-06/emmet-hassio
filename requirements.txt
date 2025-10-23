@@ -2,4 +2,6 @@ pvporcupine
 pyaudio 
 speechrecognition
 PyYAML
-logging
+flask
+psutil
+requests

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurazione Emmet</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <div class="content">
+        <h1>Configurazione Emmet</h1>
+        <div class="intro">
+            <p>Usa questo pannello per configurare Emmet. Inserisci la chiave API e i percorsi dei file del wake word e del modello per abilitare il riconoscimento vocale locale. Configura inoltre l'URL e il token del server Home Assistant per permettere ad Emmet di inviare comandi e leggere lo stato dei dispositivi.</p>
+            <p class="note">Nota: conserva i token e le chiavi in un luogo sicuro e non condividerli pubblicamente.</p>
+        </div>
+
+        <!--
+        picovoice:
+            access-key: 89Jd6AvDAfcqBFMf23BrepSkU1pGkXA+m0y+FRg/cBGWec88RTtWzg==
+            wake-up-word-file: models/Hey-Doc_it_linux_v3_0_0.ppn
+            model-file: models/porcupine_params_it.pv
+        homeassistant:
+            server-url: http://localhost:8123
+            access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjYmZiYTJiMTdhY2Q0NzQzOGZmZTA3Yzc1ODk0MTM2NiIsImlhdCI6MTc2MTA2NTY5NywiZXhwIjoyMDc2NDI1Njk3fQ.9gZ7ukfRCgzubJ54wDjH1BMm-1ZBoPpOZX9QaV6-BMI
+        -->
+
+        <div class="ha-card">
+            <div class="card-header">
+                Impostazioni Picovoice
+            </div>
+            <div class="card-content">               
+                <label for="api_key">Chiave API:</label>
+                <input type="text" id="api_key" value="" >
+
+                <label for="wake_word_file">Wake Word File:</label>
+                <input type="text" id="wake_word_file" value="" >
+
+                <label for="model_file">Model File:</label>
+                <input type="text" id="model_file" value="" >
+
+                <button class="ha-button">
+                    Salva Impostazioni
+                </button>
+            </div>
+
+            <div class="card-header">
+                Server Home Assistant
+            </div>
+            <div class="card-content">               
+                <label for="homeassistant_url">Home Assistant URL:</label>
+                <input type="text" id="homeassistant_url" value="" >
+
+                <label for="homeassistant_token">Home Assistant Token:</label>
+                <input type="text" id="homeassistant_token" value="" >
+
+                <button class="ha-button">
+                    Salva Impostazioni
+                </button>
+        </div>
+    </div>
+
+    <div class="ha-card">
+            <div class="card-header">
+                Stato del Servizio
+            </div>
+            <div class="card-content">
+                <p>Stato: <span class="status-ok">Attivo</span></p>
+                <p>Controlla i log per maggiori dettagli.</p>
+            </div>
+        </div>
+
+</body>
+</html>

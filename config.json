@@ -1,0 +1,35 @@
+{
+"name": "Emmet Voice Assistant",
+"version": "0.0.1",
+"slug": "emmet",
+"description": "Assistente vocale per Home Assistant con Porcupine e SpeechRecognition",
+"arch": ["armv7", "armhf", "aarch64", "amd64"],
+"startup": "application",
+"boot": "auto",
+"map": ["config:rw"],
+"options": {
+"wake_word_file": "models/Hey-Doc_it_linux_v3_0_0.ppn",
+"model_file": "models/porcupine_params_it.pv",
+"picovoice_access_key": "",
+"hass_url": "http://homeassistant.local:8123",
+"hass_token": "",
+"webui_enable": true,
+"webui_port": 5000,
+"log_level": "INFO",
+"audio_device": "default",
+"calibrate_on_start": false
+},
+"schema": {
+"wake_word_file": "str",
+"model_file": "str",
+"picovoice_access_key": "str",
+"hass_url": "str",
+"hass_token": "str",
+"webui_enable": "bool",
+"webui_port": "int",
+"log_level": "str",
+"audio_device": "str",
+"calibrate_on_start": "bool"
+},
+"protected": ["picovoice_access_key","hass_token"]
+}

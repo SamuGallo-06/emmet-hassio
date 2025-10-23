@@ -8,10 +8,13 @@ from pyterminal import *
 import logging
 import datetime
 import re
+import os
+import threading
 
 from commands import *
 from utilities import *
 from logo import LOGO
+from webui import *
 
 class Emmet():
     def __init__(self):
@@ -21,6 +24,12 @@ class Emmet():
         self.Setup()
         
     def CreateLogFile(self):
+        if(not os.path.exists("logs")):
+            print(blue("[BOOT]") + " Logs directory not found.")
+            print(blue("[BOOT]") + " Creating logs directory...", end="")
+            os.makedirs("logs")
+            print(bright_green("Done!"))
+        
         print(blue("[BOOT]") + " Creating log file...", end="")
         currentDateTime = datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")  
         logging.basicConfig(filename=f"logs/emmet-{currentDateTime}.log", filemode="w", format="[%(asctime)s][%(levelname)s] %(message)s", level=logging.INFO)
@@ -73,8 +82,7 @@ class Emmet():
             )
             self.logger.info("Done!")
             self.logger.info("Setup completed")
-            self.logger.info("Listening for 'Hey Doc!'")
-            print(blue("[INFO]") + " Pronto. In ascolto per 'Hey Doc!'...")
+            print(blue("[INFO]") + " Pronto!")
             
         except pvporcupine.PorcupineError as e:
             print(red("[ERROR]") + f" Porcupine error has occurred: {e}")
@@ -86,6 +94,8 @@ class Emmet():
             self.ExitEmmet()
 
     def Start(self):
+        print(blue("[INFO]") + " Listening for 'Hey Doc!'...")
+        self.logger.info("Listening for 'Hey Doc!'")
         try:
             while True:
                 pcm = self.audio_stream.read(self.porcupine.frame_length)
@@ -225,43 +235,53 @@ class Emmet():
         # self.logger.info(f"Command run successfully") if result else self.logger.critical(f"Failed running command")
         
         # return False
+
+def CheckArgs():
+    arg = sys.argv[1]
+
+    if arg == "--help" or arg == "-h":
+        DisplayHelp()
+    elif arg == "--calibrate" or arg == "-c":
+        CalibrateAmbietNoise()
+    elif arg == "--version" or arg == "-v":
+        DisplayVersion()  
+    elif arg == "--update" or arg == "-u":
+        CheckForUpdates()
+    elif arg == "--get" or arg == "-g":
+        if len(sys.argv) == 4:
+            section = sys.argv[2]
+            key = sys.argv[3]
+            GetConfigValue(section, key)
+        else:
+            print(bold(red("[ERRORE]")) + "L'opzione --get richiede 2 argomenti: <SECTION> <KEY>")
+            print("Esempio: python emmet.py --get " + blue("homeassistant") + bright_green("homeassistant"))
+            print()
+    elif arg == "--clear-logs" or arg == "-cl":
+        ClearLogFiles()
+    elif arg == "--set" or arg == "-s":
+        if len(sys.argv) == 5:
+            section = sys.argv[2]
+            key = sys.argv[3]
+            value = sys.argv[4]
+            SetConfigValue(section, key, value)
+        else:
+            print(bold(red("[ERRORE]")) + "L'opzione --set richiede 3 argomenti: <SECTION> <KEY> <VALUE>")
+            print("Esempio: python emmet.py --set " + blue("homeassistant") + bright_green("homeassistant") + yellow("http://192.168.1.10:8123"))
+            print()
+    else:
+        print(bold(red("[ERRORE]")) + f" Opzione non riconosciuta '{arg}'")
+        print("Usa -h o --help per vedere le opzioni disponibili.")
     
 if __name__ == "__main__":
     if(len(sys.argv) > 1):
-        arg = sys.argv[1]
-
-        if arg == "--help" or arg == "-h":
-            DisplayHelp()
-        elif arg == "--calibrate" or arg == "-c":
-            CalibrateAmbietNoise()
-        elif arg == "--version" or arg == "-v":
-            DisplayVersion()  
-        elif arg == "--update" or arg == "-u":
-            CheckForUpdates()
-        elif arg == "--get" or arg == "-g":
-            if len(sys.argv) == 4:
-                section = sys.argv[2]
-                key = sys.argv[3]
-                GetConfigValue(section, key)
-            else:
-                print(bold(red("[ERRORE]")) + "L'opzione --get richiede 2 argomenti: <SECTION> <KEY>")
-                print("Esempio: python emmet.py --get " + blue("homeassistant") + bright_green("homeassistant"))
-                print()
-        elif arg == "--clear-logs" or arg == "-cl":
-            ClearLogFiles()
-        elif arg == "--set" or arg == "-s":
-            if len(sys.argv) == 5:
-                section = sys.argv[2]
-                key = sys.argv[3]
-                value = sys.argv[4]
-                SetConfigValue(section, key, value)
-            else:
-                print(bold(red("[ERRORE]")) + "L'opzione --set richiede 3 argomenti: <SECTION> <KEY> <VALUE>")
-                print("Esempio: python emmet.py --set " + blue("homeassistant") + bright_green("homeassistant") + yellow("http://192.168.1.10:8123"))
-                print()
-        else:
-            print(bold(red("[ERRORE]")) + f" Opzione non riconosciuta '{arg}'")
-            print("Usa -h o --help per vedere le opzioni disponibili.")
+        CheckArgs()
     else:
-        emmet = Emmet() 
+        emmet = Emmet()
+        
+        # Avvia la Web UI in un thread separato
+        emmet_webui = EmmetWebUI(emmet, emmet.logger)
+        webui_thread = threading.Thread(target=emmet_webui.Run, daemon=True)
+        webui_thread.start()
+        
+        # Avvia l'assistente vocale nel thread principale
         emmet.Start()
