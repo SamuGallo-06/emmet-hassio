@@ -47,12 +47,20 @@ class Emmet():
             self.currentSettings = yaml.safe_load(file)
         
         print(blue("[BOOT]") + " Loading settings...", end="")
+        
+        #Settigs
         self.logger.info("Loading Settings...")   
         self.PICOVOICE_ACCESS_KEY = self.currentSettings["picovoice"]["access-key"]
         self.WAKE_WORD_FILE = self.currentSettings["picovoice"]["wake-up-word-file"]
         self.MODEL_FILE_IT = self.currentSettings["picovoice"]["model-file"]
         self.HASS_URL = self.currentSettings["homeassistant"]["server-url"]
         self.HASS_TOKEN = self.currentSettings["homeassistant"]["access-token"]
+        self.LOGLEVEL = self.currentSettings["logging"]["level"]
+        self.WEBUI_ENABLED = self.currentSettings["webui"]["enabled"]
+        self.WEBUI_PORT = self.currentSettings["webui"]["port"]
+        self.AUDIO_DEVICE = self.currentSettings["audio"]["device"]
+        self.AUDIO_CALIBRATE_ON_START = self.currentSettings["audio"]["calibrate_on_start"]
+        
         print(bright_green("Done!"))
         self.logger.info("Done!")
 
@@ -115,7 +123,12 @@ class Emmet():
                     print(blue("[INFO]") + " Listening for command...")
 
                     with sr.Microphone() as source:
-                        self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
+                        if(self.AUDIO_CALIBRATE_ON_START):
+                            print(blue("[INFO]") + " Calibrating ambient noise, please stay silent...", end="")
+                            self.recognizer.adjust_for_ambient_noise(source, duration=3)
+                            print(bright_green("Done!"))
+                            print(blue("[INFO]") + f" Energy threshold set to: {self.recognizer.energy_threshold}")
+                            self.logger.info(f"Ambient noise calibrated, energy threshold set to: {self.recognizer.energy_threshold}")
                         
                         try:
                             audio_data = self.recognizer.listen(source, timeout=5, phrase_time_limit=10)
@@ -278,10 +291,14 @@ if __name__ == "__main__":
     else:
         emmet = Emmet()
         
-        # Avvia la Web UI in un thread separato
-        emmet_webui = EmmetWebUI(emmet, emmet.logger)
-        webui_thread = threading.Thread(target=emmet_webui.Run, daemon=True)
-        webui_thread.start()
+        # Read Ingress Path from environment variable (for Home Assistant add-on)
+        ingress_path = os.environ.get('INGRESS_PATH', '')
         
-        # Avvia l'assistente vocale nel thread principale
+        if(emmet.WEBUI_ENABLED):
+            # Start the Web UI in a separate thread
+            emmet_webui = EmmetWebUI(emmet, emmet.logger, ingress_path=ingress_path)
+            webui_thread = threading.Thread(target=emmet_webui.Run, daemon=True)
+            webui_thread.start()
+
+        # Start the voice assistant in the main thread
         emmet.Start()

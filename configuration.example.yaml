@@ -1,0 +1,49 @@
+# Esempio di configurazione per Emmet Voice Assistant
+# Copia questo file come configuration.yaml e modifica i valori
+
+picovoice:
+  # Ottieni la tua chiave gratuita su https://console.picovoice.ai/
+  access-key: "YOUR_PICOVOICE_ACCESS_KEY_HERE"
+  
+  # Percorso al file wake word (deve esistere nella cartella models/)
+  wake-up-word-file: "models/Hey-Doc_it_linux_v3_0_0.ppn"
+  
+  # Percorso al modello linguistico italiano
+  model-file: "models/porcupine_params_it.pv"
+
+homeassistant:
+  # URL di Home Assistant
+  # Se usi l'add-on: http://supervisor/core
+  # Se usi standalone: http://homeassistant.local:8123
+  server-url: "http://supervisor/core"
+  
+  # Long-Lived Access Token di Home Assistant
+  # Ottienilo da: Profilo → Sicurezza → Token di accesso di lunga durata
+  access-token: "YOUR_HOME_ASSISTANT_TOKEN_HERE"
+
+logging:
+  # Livello di log: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: INFO
+  
+  # Percorso per salvare i log
+  path: "logs/"
+
+webui:
+  # Abilita/disabilita interfaccia web
+  enabled: true
+  
+  # Porta per l'interfaccia web (default: 5000)
+  port: 5000
+
+audio:
+  # Device audio da utilizzare
+  # Opzioni comuni:
+  #   - "default" : device di default
+  #   - "hw:0,0"  : prima scheda audio, primo device
+  #   - "hw:1,0"  : seconda scheda audio, primo device
+  # Usa 'aplay -l' per vedere i device disponibili
+  device: "default"
+  
+  # Esegui calibrazione del rumore ambientale all'avvio
+  # Utile per la prima configurazione o ambienti rumorosi
+  calibrate_on_start: false

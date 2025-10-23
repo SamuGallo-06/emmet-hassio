@@ -5,3 +5,19 @@ picovoice:
 homeassistant:
   server-url: http://localhost:8123
   access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjYmZiYTJiMTdhY2Q0NzQzOGZmZTA3Yzc1ODk0MTM2NiIsImlhdCI6MTc2MTA2NTY5NywiZXhwIjoyMDc2NDI1Njk3fQ.9gZ7ukfRCgzubJ54wDjH1BMm-1ZBoPpOZX9QaV6-BMI
+logging:
+  level: INFO
+  path: "logs/"
+webui:
+  enabled: true
+  port: 5000
+
+audio:
+  # Audio device to use
+  # Common options:
+  #   - "default" : default device
+  #   - "hw:0,0"  : first sound card, first device
+  #   - "hw:1,0"  : second sound card, first device
+  # Use 'aplay -l' to see available devices
+  device: "default"
+  calibrate_on_start: false
